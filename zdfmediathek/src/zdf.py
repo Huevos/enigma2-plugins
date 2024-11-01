@@ -15,7 +15,11 @@ from Components.ScrollLabel import ScrollLabel
 from Components.Sources.StaticText import StaticText
 from Components.Sources.List import List
 from enigma import eServiceReference, ePicLoad, gPixmapPtr, getDesktop, addFont
-from Screens.InfoBarGenerics import setResumePoint
+try:
+	from Screens.InfoBarGenerics import resumePointsInstance
+	setResumePoint = resumePointsInstance.setResumePoint
+except ImportError:
+	from Screens.InfoBarGenerics import setResumePoint
 from Screens.InfoBar import MoviePlayer
 from Screens.Screen import Screen
 from Screens.ChoiceBox import ChoiceBox
@@ -105,7 +109,7 @@ class ZDFMediathek(Screen):
         elif Type == "PLAY":
             self.Play()
         elif Type == "LIVE":
-            self.session.open(MessageBox, "Achtung! Livestreams werden in der aktuellen Version noch nicht unterstützt.", MessageBox.TYPE_INFO)
+            self.session.open(MessageBox, "Achtung! Livestreams werden in der aktuellen Version noch nicht unterstÃ¼tzt.", MessageBox.TYPE_INFO)
         else:
             Index = self["movielist"].getIndex()
             url = self["movielist"].getCurrent()[2]
@@ -125,12 +129,12 @@ class ZDFMediathek(Screen):
 
     def Download(self):
         if self.DL_File:
-            self.session.openWithCallback(self.DL_Stop, MessageBox, "möchten Sie den Download abbrechen?", default=True, type=MessageBox.TYPE_YESNO)
+            self.session.openWithCallback(self.DL_Stop, MessageBox, "mÃ¶chten Sie den Download abbrechen?", default=True, type=MessageBox.TYPE_YESNO)
         else:
             url = self["movielist"].getCurrent()[2]
             data = ensure_str(geturl(url))
             if 'fskCheck":true' in data:
-                self.session.open(MessageBox, "Das Video ist nicht für Kinder und Jugendliche geeignet und kann erst nach 22 Uhr Download werden.", MessageBox.TYPE_INFO)
+                self.session.open(MessageBox, "Das Video ist nicht fÃ¼r Kinder und Jugendliche geeignet und kann erst nach 22 Uhr Download werden.", MessageBox.TYPE_INFO)
                 return
             liste = []
             UT = []
@@ -348,9 +352,9 @@ class ZDFMediathek(Screen):
         else:
             plot += "\n\n" + js.get("textLong") if js.get("textLong") else "\n\n" + js.get("beschreibung", "")
         plot += "\n\nGesendet am " + js.get("visibleFrom") if js.get("visibleFrom") else ""
-        plot += "\nVerfügbar bis " + js.get("timetolive") + "\n" if js.get("timetolive") else ""
+        plot += "\nVerfÃ¼gbar bis " + js.get("timetolive") + "\n" if js.get("timetolive") else ""
         plot += "in Deutschland" if js.get("geoLocation") == "de" else ""
-        plot += "in Deutschland, Österreich, Schweiz" if js.get("geoLocation") == "dach" else ""
+        plot += "in Deutschland, Ã–sterreich, Schweiz" if js.get("geoLocation") == "dach" else ""
         plot += "\n\n" + js.get("brandTitle", "")
         duration = str(timedelta(seconds=int(js.get("length")))) if str(js.get("length")).isdigit() else ""
         url = js.get("url")
@@ -382,7 +386,7 @@ class ZDFMediathek(Screen):
         url = self["movielist"].getCurrent()[2]
         data = ensure_str(geturl(url))
         if 'fskCheck":true' in data:
-            self.session.open(MessageBox, "Das Video ist nicht für Kinder und Jugendliche geeignet und kann erst nach 22 Uhr abgespielt werden.", MessageBox.TYPE_INFO)
+            self.session.open(MessageBox, "Das Video ist nicht fÃ¼r Kinder und Jugendliche geeignet und kann erst nach 22 Uhr abgespielt werden.", MessageBox.TYPE_INFO)
             return
         liste = []
         if data:
